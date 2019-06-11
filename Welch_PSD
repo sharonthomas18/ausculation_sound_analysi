@@ -1,0 +1,38 @@
+# Calculate Welch PSD f - frequencies ; Pxx_den-corresponding PSD
+            f, Pxx_den = signal.welch(ts_rec, fs, nfft=256, nperseg=128)
+            plt.figure(1)
+            plt.title(file)
+            plt.plot(f, Pxx_den)
+            plt.show()
+            plt.close(1)
+            df = f[2] - f[1]
+            row = []
+            x = 70
+            y = 150
+            # divide PSD into sub-bands
+            for i in range(0, 10):
+                beginidx = floor(x / df) + 1
+                endidx = floor(y / df) + 1
+                subband_x_y = Pxx_den[beginidx:endidx]
+        # Mean of absolute values
+                m = sum(abs(subband_x_y)) / len(subband_x_y)
+        # Variance
+                v = np.var(subband_x_y)
+                k = scipy.stats.kurtosis(subband_x_y)
+                sk = scipy.stats.skew(subband_x_y)
+                x = x + 80
+                y = y + 80
+                row.append(m)
+                row.append(v)
+                row.append(k)
+                row.append(sk)
+            with open(r'C:\Users\user\Documents\project\welch.csv', 'a', newline='') as csvFile:
+                writer = csv.writer(csvFile)
+                if p <= 11:
+                    r = 0
+                else:
+                    r = 1
+                p = p + 1
+                row.append(r)
+                writer.writerow(row)
+            csvFile.close()
