@@ -1,0 +1,26 @@
+#Wavelet Shrinkage Denoising
+
+import glob
+import numpy as np
+import pywt #Lee et al., (2019). PyWavelets: A Python package for wavelet analysis. Journal of Open Source Software, 4(36), 1237, https://doi.org/10.21105/joss.01237
+from pydub import AudioSegment # Copyright © 2011 James Robert, http://jiaaro.com
+from scipy.io import wavfile
+import time
+path = r'C:\Users\user\Documents\project\graph\*.wav'
+for file in glob.glob(path):
+    fs, data = wavfile.read(file)
+    # divide audio file into segments of 2 seconds each (one breath cycle)
+    x = 1;
+    y = 3;
+    t1 = x * 1000  # Works in milliseconds
+    t2 = y * 1000
+    newAudio = AudioSegment.from_wav(file)
+    newAudio = newAudio[t1:t2]
+    newAudio.export('newSound.wav', format="wav")
+    fs1, data1 = wavfile.read('newSound.wav')
+    x = x + 2
+    y = y + 2
+    ca, cd = pywt.dwt(data, 'db8', 'sym', 0)
+    cat = pywt.threshold(ca, np.std(ca) / 2, 'soft')
+    cdt = pywt.threshold(cd, np.std(cd) / 2, 'soft')
+    ts_rec = pywt.idwt(cat, cdt, 'db8', 'sym', 0)
