@@ -1,0 +1,39 @@
+#Wavelet Multiresolution decomposition
+            coeffs = pywt.wavedec(ts_rec, 'db8', level=7)
+            # wavelet coefficients
+            cA7, cD7, cD6, cD5, cD4, cD3, cD2, cD1 = coeffs
+            l1 = len(cD7)
+            l2 = len(cD6)
+            l3 = len(cD5)
+            l4 = len(cD4)
+            l5 = len(cD3)
+            # standard deviation
+            s1 = np.std(cD7)
+            s2 = np.std(cD6)
+            s3 = np.std(cD5)
+            s4 = np.std(cD4)
+            s5 = np.std(cD3)
+            # average power
+            p1 = np.square(sum(abs(cD7)))
+            p2 = np.square(sum(abs(cD6)))
+            p3 = np.square(sum(abs(cD5)))
+            p4 = np.square(sum(abs(cD4)))
+            p5 = np.square(sum(abs(cD3)))
+            p1 = p1 / l1;
+            p2 = p2 / l2;
+            p3 = p3 / l3;
+            p4 = p4 / l4;
+            p5 = p5 / l5;
+            # write the features into the csv file
+            row = [s1, s2, s3, s4, s5, p1, p2, p3, p4, p5]
+            with open(r'C:\Users\user\Documents\project\wavelet.csv', 'a', newline='') as csvFile:
+                writer = csv.writer(csvFile)
+                # to enter the corresponding class labels
+                if a <= 11:
+                    r = 0;
+                else:
+                    r = 1;
+                a = a + 1;
+                row.append(r);
+                writer.writerow(row)
+            csvFile.close()
